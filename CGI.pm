@@ -1,6 +1,7 @@
 package CGI;
+use JSON;
 
-our @EXPORT	= qw(validate_input, parse_form_data, headers, show_error, save_to_session, get_from_session, destroy_session);
+our @EXPORT	= qw(validate_input, parse_form_data, headers, show_error, save_to_session, get_from_session, destroy_session, parse_json_post);
 
 my $SESSION_DIR = "/sessions";
 my $TEMPLATE_DIR = "../templates/";
@@ -12,6 +13,25 @@ sub validate_input
 
 }
 
+
+sub parse_json_post 
+{
+
+	my $post_data = do {
+		local $/;
+		<STDIN>;
+	};
+
+	my $json;
+	eval {
+		$json = decode_json($post_data);
+	};
+	if($@){
+		die "Failed to parse JSON data: $@";
+	}
+
+	return $json;
+}
 
 sub redirect_url
 {
